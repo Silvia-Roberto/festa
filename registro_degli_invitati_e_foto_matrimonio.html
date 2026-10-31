@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="it" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roberto & Silvia - Il Nostro Matrimonio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wedding: {
+                            cream: '#FAF7F2',
+                            card: '#FFFFFF',
+                            gold: '#D4AF37',
+                            goldDark: '#B89020',
+                            rose: '#E8D5C4',
+                            sage: '#8A9A86',
+                            text: '#4A4238',
+                            muted: '#8C8275'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Montserrat"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF7F2;
+            color: #4A4238;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-serif-title {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FAF7F2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E8D5C4;
+            border-radius: 9999px;
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #B89020 100%);
+        }
+        @keyframes subtle-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-subtle-pulse {
+            animation: subtle-pulse 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col justify-between selection:bg-wedding-rose selection:text-wedding-text">
+
+    <!-- TOP BANNER -->
+    <div class="w-full bg-wedding-sage/10 text-wedding-text text-xs py-1.5 px-4 text-center tracking-wider font-light flex items-center justify-center gap-2">
+        <i class="fa-solid fa-sparkles text-wedding-gold text-xs"></i>
+        <span>Condividi i tuoi ricordi e scatti con gli sposi</span>
+        <i class="fa-solid fa-sparkles text-wedding-gold text-xs"></i>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="relative px-4 pt-8 pb-6 text-center max-w-xl mx-auto w-full">
+        <div class="absolute top-2 left-1/2 -translate-x-1/2 opacity-20 pointer-events-none w-48">
+            <svg viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 30C120 10 150 10 170 30C150 50 120 50 100 30Z" stroke="#8A9A86" stroke-width="1.5"/>
+                <path d="M100 30C80 10 50 10 30 30C50 50 80 50 100 30Z" stroke="#8A9A86" stroke-width="1.5"/>
+                <circle cx="100" cy="30" r="3" fill="#D4AF37"/>
+            </svg>
+        </div>
+
+        <p class="text-xs uppercase tracking-[0.3em] text-wedding-muted font-medium mb-1">Benvenuti al matrimonio di</p>
+        <h1 class="font-serif-title text-4xl sm:text-5xl font-semibold text-wedding-text tracking-wide mb-2">
+            Roberto <span class="text-wedding-gold italic font-normal">&amp;</span> Silvia
+        </h1>
+        <p class="text-sm italic font-serif text-wedding-muted mb-4">12 Dicembre 2026</p>
+
+        <!-- Admin Indicator Bar (Visible only when logged in as admin) -->
+        <div id="adminBadge" class="hidden mb-3 bg-red-100 border border-red-300 text-red-800 text-xs px-3 py-1.5 rounded-full inline-flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Modalità Amministratore Attiva</span>
+            <button onclick="logoutAdmin()" class="underline ml-2 hover:text-red-950">(Esci)</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center items-center gap-3 mt-2">
+            <button onclick="openModal('qrModal')" class="inline-flex items-center gap-2 bg-white border border-wedding-gold/40 text-wedding-text px-3.5 py-1.5 rounded-full text-xs font-medium shadow-sm hover:border-wedding-gold transition-all duration-200 active:scale-95">
+                <i class="fa-solid fa-qrcode text-wedding-gold"></i>
+                <span>QR Code Tavoli</span>
+            </button>
+            <button onclick="scrollToUpload()" class="inline-flex items-center gap-2 bg-wedding-gold text-white px-4 py-1.5 rounded-full text-xs font-medium shadow-md hover:bg-wedding-goldDark transition-all duration-200 active:scale-95 animate-subtle-pulse">
+                <i class="fa-solid fa-camera"></i>
+                <span>Lascia un Ricordo</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-xl mx-auto w-full px-4 flex-grow space-y-8">
+
+        <!-- UPLOAD FORM CARD -->
+        <section id="uploadSection" class="bg-wedding-card rounded-2xl p-6 shadow-sm border border-wedding-rose/40 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 gold-gradient"></div>
+            
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-wedding-cream flex items-center justify-center text-wedding-gold border border-wedding-gold/20 shrink-0">
+                    <i class="fa-solid fa-heart text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="font-serif-title text-xl font-semibold text-wedding-text">Il tuo Augurio per gli Sposi</h2>
+                    <p class="text-xs text-wedding-muted">Carica una foto o scrivi un pensiero speciale</p>
+                </div>
+            </div>
+
+            <form id="postForm" onsubmit="handlePostSubmit(event)" class="space-y-4">
+                <!-- Guest Name Input -->
+                <div>
+                    <label for="guestName" class="block text-xs font-medium uppercase tracking-wider text-wedding-muted mb-1">Il tuo Nome / Nomi</label>
+                    <input type="text" id="guestName" required placeholder="Es. Luca e Giulia, Zia Maria..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-wedding-rose/60 bg-wedding-cream/30 text-sm focus:outline-none focus:ring-2 focus:ring-wedding-gold/50 focus:border-transparent transition-all">
+                </div>
+
+                <!-- Message Input -->
+                <div>
+                    <label for="guestMessage" class="block text-xs font-medium uppercase tracking-wider text-wedding-muted mb-1">Un messaggio per gli sposi</label>
+                    <textarea id="guestMessage" rows="3" placeholder="Scrivi qui i tuoi auguri più affettuosi..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-wedding-rose/60 bg-wedding-cream/30 text-sm focus:outline-none focus:ring-2 focus:ring-wedding-gold/50 focus:border-transparent transition-all resize-none"></textarea>
+                </div>
+
+                <!-- Photo Upload Field -->
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider text-wedding-muted mb-1">Aggiungi una foto (Opzionale)</label>
+                    
+                    <div id="imageUploadArea" onclick="document.getElementById('photoInput').click()" 
+                        class="border-2 border-dashed border-wedding-rose rounded-xl p-4 text-center cursor-pointer hover:bg-wedding-cream/50 transition-all group flex flex-col items-center justify-center min-h-[110px]">
+                        
+                        <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewImage(event)">
+                        
+                        <div id="uploadPlaceholder" class="flex flex-col items-center gap-1">
+                            <div class="w-10 h-10 rounded-full bg-wedding-rose/30 flex items-center justify-center text-wedding-text group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-cloud-arrow-up text-wedding-gold"></i>
+                            </div>
+                            <span class="text-xs font-medium text-wedding-text mt-1">Scatta o seleziona una foto</span>
+                            <span class="text-[10px] text-wedding-muted">JPG o PNG dalla fotocamera / galleria</span>
+                        </div>
+
+                        <!-- Image Preview Container -->
+                        <div id="previewContainer" class="hidden relative w-full flex items-center justify-center">
+                            <img id="imagePreview" src="" alt="Anteprima foto" class="max-h-48 rounded-lg object-cover shadow-sm">
+                            <button type="button" onclick="removeImage(event)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md hover:bg-red-600 transition-colors">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="w-full py-3 px-4 bg-wedding-gold text-white font-medium rounded-xl shadow-md hover:bg-wedding-goldDark transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.99]">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                    <span>Pubblica sulla Bacheca</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- FEED SECTION / GUEST WALL -->
+        <section class="space-y-4">
+            <!-- Feed Header & Filters -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-wedding-rose/40 pb-3">
+                <div class="flex items-center gap-2">
+                    <h2 class="font-serif-title text-2xl font-semibold text-wedding-text">Bacheca dei Ricordi</h2>
+                    <span id="postCount" class="bg-wedding-rose/40 text-wedding-text text-xs px-2 py-0.5 rounded-full font-medium">0</span>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex items-center gap-1.5 text-xs">
+                    <button onclick="filterPosts('all')" id="filter-all" class="px-3 py-1 rounded-full font-medium transition-all bg-wedding-gold text-white shadow-sm">
+                        Tutti
+                    </button>
+                    <button onclick="filterPosts('photos')" id="filter-photos" class="px-3 py-1 rounded-full font-medium transition-all bg-white border border-wedding-rose/60 text-wedding-muted hover:border-wedding-gold">
+                        <i class="fa-regular fa-image mr-1"></i>Foto
+                    </button>
+                    <button onclick="filterPosts('messages')" id="filter-messages" class="px-3 py-1 rounded-full font-medium transition-all bg-white border border-wedding-rose/60 text-wedding-muted hover:border-wedding-gold">
+                        <i class="fa-regular fa-comment mr-1"></i>Messaggi
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feed Items List -->
+            <div id="postsFeed" class="space-y-4">
+                <!-- Posts will be rendered dynamically -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-12 px-4 bg-white rounded-2xl border border-dashed border-wedding-rose/60">
+                <div class="w-12 h-12 rounded-full bg-wedding-cream flex items-center justify-center mx-auto text-wedding-muted mb-2">
+                    <i class="fa-regular fa-images text-xl"></i>
+                </div>
+                <p class="font-serif-title text-lg text-wedding-text font-medium">La bacheca è ancora vuota</p>
+                <p class="text-xs text-wedding-muted">Sii il primo a scattare una foto o lasciare un augurio per Roberto e Silvia!</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-12 py-6 border-t border-wedding-rose/40 text-center text-xs text-wedding-muted space-y-2 bg-white">
+        <p class="font-serif-title text-sm text-wedding-text font-medium">Roberto &amp; Silvia • 12.12.2026</p>
+        <p>Grazie per aver condiviso con noi questo giorno speciale ❤️</p>
+
+        <div class="pt-2">
+            <button onclick="openModal('adminModal')" id="adminLoginLink" class="text-[11px] text-wedding-muted hover:text-wedding-gold underline flex items-center justify-center gap-1 mx-auto">
+                <i class="fa-solid fa-lock text-[10px]"></i>
+                <span>Area Riservata Sposi (Admin)</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: QR CODE DISPLAY MODAL -->
+    <div id="qrModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-wedding-card rounded-2xl max-w-sm w-full p-6 text-center shadow-xl border border-wedding-gold/30 transform scale-95 transition-transform duration-300 relative" id="qrModalCard">
+            <button onclick="closeModal('qrModal')" class="absolute top-4 right-4 text-wedding-muted hover:text-wedding-text w-8 h-8 rounded-full flex items-center justify-center bg-wedding-cream">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="mb-3">
+                <i class="fa-solid fa-qrcode text-3xl text-wedding-gold mb-1"></i>
+                <h3 class="font-serif-title text-2xl font-semibold text-wedding-text">Generatore QR Code</h3>
+                <p class="text-xs text-wedding-muted mt-1">Imposta l'indirizzo del sito e scarica il QR Code da stampare sui segnatavolo del ricevimento.</p>
+            </div>
+
+            <!-- Custom URL Input Field for QR Generation -->
+            <div class="mb-3 text-left">
+                <label for="qrUrlInput" class="block text-[11px] font-medium uppercase tracking-wider text-wedding-muted mb-1">Indirizzo del Sito (URL)</label>
+                <div class="relative">
+                    <input type="url" id="qrUrlInput" oninput="updateQRCode(this.value)" placeholder="https://silvia-roberto.github.io/festa/" 
+                        class="w-full px-3 py-2 text-xs rounded-xl border border-wedding-rose/60 bg-wedding-cream/30 text-wedding-text focus:outline-none focus:ring-2 focus:ring-wedding-gold/50 transition-all pr-8">
+                    <button type="button" onclick="resetQrUrlToCurrent()" class="absolute right-2 top-1/2 -translate-y-1/2 text-wedding-muted hover:text-wedding-gold text-xs" title="Ripristina URL originale">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Generated QR Code Container -->
+            <div class="bg-white p-4 rounded-xl border border-wedding-rose/60 inline-block my-1 shadow-inner min-w-[200px] min-h-[200px] flex items-center justify-center">
+                <div id="qrcodeCanvas" class="flex justify-center items-center"></div>
+            </div>
+            
+            <p class="text-[11px] text-wedding-muted italic mb-4">Inquadrando questo QR Code con lo smartphone gli ospiti accederanno direttamente a questo registro.</p>
+
+            <div class="flex gap-2 justify-center">
+                <button onclick="window.print()" class="w-full py-2.5 px-3 bg-wedding-cream border border-wedding-gold/40 text-wedding-text text-xs font-medium rounded-xl hover:bg-wedding-rose/30 transition-all flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Stampa</span>
+                </button>
+                <button onclick="downloadQRCode()" class="w-full py-2.5 px-3 bg-wedding-gold text-white text-xs font-medium rounded-xl hover:bg-wedding-goldDark transition-all flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Scarica PNG</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: FULL IMAGE PREVIEW MODAL -->
+    <div id="imageModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-2 hidden opacity-0 transition-opacity duration-300" onclick="closeModal('imageModal')">
+        <div class="relative max-w-3xl w-full max-h-[90vh] flex flex-col items-center justify-center" onclick="event.stopPropagation()">
+            <button onclick="closeModal('imageModal')" class="absolute -top-10 right-0 text-white hover:text-wedding-gold text-xl p-2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="modalFullImage" src="" alt="Foto a tutto schermo" class="max-h-[80vh] w-auto max-w-full rounded-lg object-contain shadow-2xl">
+            <p id="modalImageCaption" class="text-white text-xs text-center mt-3 font-light px-4"></p>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ADMIN LOGIN MODAL -->
+    <div id="adminModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-wedding-card rounded-2xl max-w-xs w-full p-6 text-center shadow-xl border border-wedding-gold/30 relative">
+            <button onclick="closeModal('adminModal')" class="absolute top-4 right-4 text-wedding-muted hover:text-wedding-text w-8 h-8 rounded-full flex items-center justify-center bg-wedding-cream">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="mb-4">
+                <div class="w-12 h-12 rounded-full bg-wedding-cream border border-wedding-gold/20 flex items-center justify-center mx-auto text-wedding-gold mb-2">
+                    <i class="fa-solid fa-user-gear text-xl"></i>
+                </div>
+                <h3 class="font-serif-title text-2xl font-semibold text-wedding-text">Accesso Sposi</h3>
+                <p class="text-xs text-wedding-muted mt-1">Inserisci la password per gestire o moderare i contenuti della bacheca.</p>
+            </div>
+
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                <div>
+                    <input type="password" id="adminPassword" required placeholder="Password..." 
+                        class="w-full px-3.5 py-2 text-center text-sm rounded-xl border border-wedding-rose/60 bg-wedding-cream/30 focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-wedding-gold text-white text-xs font-semibold rounded-xl hover:bg-wedding-goldDark transition-all shadow-md">
+                    Accedi come Admin
+                </button>
+            </form>
+            <p class="text-[10px] text-wedding-muted mt-3">Password predefinita: <code class="bg-wedding-cream px-1 py-0.5 rounded border border-wedding-rose/40">admin123</code></p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // State Variables
+        let posts = [];
+        let currentFilter = 'all';
+        let currentSelectedBase64 = null;
+        let qrCodeInstance = null;
+        let isAdmin = false;
+
+        const DEFAULT_URL = 'https://silvia-roberto.github.io/festa/';
+        const ADMIN_PASS = 'admin123';
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPosts();
+            checkAdminSession();
+            initQRCode();
+        });
+
+        // Load posts from localStorage (Starts clean/empty if no guest has posted yet)
+        function loadPosts() {
+            const stored = localStorage.getItem('wedding_posts');
+            if (stored) {
+                try {
+                    posts = JSON.parse(stored);
+                } catch (e) {
+                    posts = [];
+                }
+            } else {
+                posts = [];
+            }
+            renderPosts();
+        }
+
+        // Save state to LocalStorage
+        function savePosts() {
+            localStorage.setItem('wedding_posts', JSON.stringify(posts));
+        }
+
+        // Check Admin Session
+        function checkAdminSession() {
+            isAdmin = sessionStorage.getItem('wedding_admin_logged') === 'true';
+            const adminBadge = document.getElementById('adminBadge');
+            if (isAdmin) {
+                adminBadge.classList.remove('hidden');
+            } else {
+                adminBadge.classList.add('hidden');
+            }
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const passInput = document.getElementById('adminPassword');
+            if (passInput.value === ADMIN_PASS) {
+                sessionStorage.setItem('wedding_admin_logged', 'true');
+                isAdmin = true;
+                checkAdminSession();
+                closeModal('adminModal');
+                passInput.value = '';
+                showToast('Accesso effettuato come Amministratore! Ora puoi eliminare i post.');
+                renderPosts();
+            } else {
+                showToast('Password errata!');
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('wedding_admin_logged');
+            isAdmin = false;
+            checkAdminSession();
+            showToast('Uscito dalla modalità amministratore.');
+            renderPosts();
+        }
+
+        // Render Posts Feed
+        function renderPosts() {
+            const feedContainer = document.getElementById('postsFeed');
+            const emptyState = document.getElementById('emptyState');
+            const postCountEl = document.getElementById('postCount');
+
+            let filtered = posts;
+            if (currentFilter === 'photos') {
+                filtered = posts.filter(p => p.image);
+            } else if (currentFilter === 'messages') {
+                filtered = posts.filter(p => !p.image);
+            }
+
+            postCountEl.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                feedContainer.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            feedContainer.innerHTML = filtered.map(post => `
+                <article class="bg-wedding-card rounded-2xl p-4 sm:p-5 shadow-sm border border-wedding-rose/30 space-y-3 transition-all duration-200 hover:shadow-md relative">
+                    <!-- Post Header -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full bg-wedding-rose/40 text-wedding-goldDark font-serif-title font-bold text-sm flex items-center justify-center border border-wedding-gold/20">
+                                ${escapeHTML(post.name).charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-wedding-text leading-tight">${escapeHTML(post.name)}</h3>
+                                <span class="text-[10px] text-wedding-muted">${post.timestamp || 'Oggi'}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <!-- Like Button -->
+                            <button onclick="toggleLike('${post.id}')" class="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-all ${post.liked ? 'bg-red-50 text-red-500 font-medium' : 'bg-wedding-cream text-wedding-muted hover:text-red-400'}">
+                                <i class="${post.liked ? 'fa-solid' : 'fa-regular'} fa-heart ${post.liked ? 'text-red-500 scale-110' : ''} transition-transform"></i>
+                                <span>${post.likes || 0}</span>
+                            </button>
+
+                            <!-- Delete Button (Only visible to logged-in Admin) -->
+                            ${isAdmin ? `
+                                <button onclick="deletePost('${post.id}')" title="Elimina post (Admin)" class="bg-red-100 hover:bg-red-200 text-red-600 p-1.5 rounded-full text-xs transition-colors">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Post Text Message -->
+                    ${post.message ? `<p class="text-xs sm:text-sm text-wedding-text font-light leading-relaxed whitespace-pre-line">${escapeHTML(post.message)}</p>` : ''}
+
+                    <!-- Post Image -->
+                    ${post.image ? `
+                        <div class="rounded-xl overflow-hidden bg-black/5 cursor-pointer border border-wedding-rose/20 max-h-96 relative group" onclick="openImageModal('${post.image}', '${escapeHTML(post.name)}')">
+                            <img src="${post.image}" alt="Foto condivisa da ${escapeHTML(post.name)}" class="w-full h-auto object-cover max-h-96 group-hover:scale-105 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs gap-1 font-medium">
+                                <i class="fa-solid fa-expand"></i> Ingrandisci
+                            </div>
+                        </div>
+                    ` : ''}
+                </article>
+            `).join('');
+        }
+
+        // Delete individual post (Admin action)
+        function deletePost(postId) {
+            if (confirm('Sei sicuro di voler eliminare questo contenuto dalla bacheca?')) {
+                posts = posts.filter(p => p.id !== postId);
+                savePosts();
+                renderPosts();
+                showToast('Post eliminato correttamente.');
+            }
+        }
+
+        // Preview local image selection
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('La foto è troppo grande. Scegli un\'immagine inferiore a 5MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentSelectedBase64 = e.target.result;
+                const previewImg = document.getElementById('imagePreview');
+                previewImg.src = currentSelectedBase64;
+
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('previewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Remove selected image preview
+        function removeImage(event) {
+            if (event) event.stopPropagation();
+            currentSelectedBase64 = null;
+            document.getElementById('photoInput').value = '';
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('previewContainer').classList.add('hidden');
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+        }
+
+        // Handle Post Submission
+        function handlePostSubmit(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('guestName');
+            const messageInput = document.getElementById('guestMessage');
+
+            const name = nameInput.value.trim();
+            const message = messageInput.value.trim();
+
+            if (!name) {
+                showToast('Inserisci il tuo nome per pubblicare.');
+                return;
+            }
+
+            if (!message && !currentSelectedBase64) {
+                showToast('Inserisci un messaggio o seleziona una foto.');
+                return;
+            }
+
+            const now = new Date();
+            const timeFormatted = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+            const newPost = {
+                id: Date.now().toString(),
+                name: name,
+                message: message,
+                image: currentSelectedBase64,
+                likes: 0,
+                liked: false,
+                timestamp: timeFormatted
+            };
+
+            posts.unshift(newPost);
+            savePosts();
+            renderPosts();
+
+            nameInput.value = '';
+            messageInput.value = '';
+            removeImage(event);
+
+            showToast('Il tuo pensiero è stato pubblicato sulla bacheca! ❤️');
+
+            document.getElementById('postsFeed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Toggle Heart Likes
+        function toggleLike(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                if (post.liked) {
+                    post.likes = Math.max(0, post.likes - 1);
+                    post.liked = false;
+                } else {
+                    post.likes = (post.likes || 0) + 1;
+                    post.liked = true;
+                }
+                savePosts();
+                renderPosts();
+            }
+        }
+
+        // Filter Posts
+        function filterPosts(filterType) {
+            currentFilter = filterType;
+
+            ['all', 'photos', 'messages'].forEach(type => {
+                const btn = document.getElementById(`filter-${type}`);
+                if (type === filterType) {
+                    btn.className = 'px-3 py-1 rounded-full font-medium transition-all bg-wedding-gold text-white shadow-sm';
+                } else {
+                    btn.className = 'px-3 py-1 rounded-full font-medium transition-all bg-white border border-wedding-rose/60 text-wedding-muted hover:border-wedding-gold';
+                }
+            });
+
+            renderPosts();
+        }
+
+        // Initialize QR Code generator with default link
+        function initQRCode() {
+            const qrContainer = document.getElementById('qrcodeCanvas');
+            const urlInput = document.getElementById('qrUrlInput');
+            qrContainer.innerHTML = '';
+            
+            urlInput.value = DEFAULT_URL;
+
+            qrCodeInstance = new QRCode(qrContainer, {
+                text: DEFAULT_URL,
+                width: 180,
+                height: 180,
+                colorDark: "#4A4238",
+                colorLight: "#FFFFFF",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // Update QR Code dynamically
+        function updateQRCode(urlText) {
+            const qrContainer = document.getElementById('qrcodeCanvas');
+            if (!urlText || !urlText.trim()) {
+                urlText = DEFAULT_URL;
+            }
+            
+            qrContainer.innerHTML = '';
+            qrCodeInstance = new QRCode(qrContainer, {
+                text: urlText.trim(),
+                width: 180,
+                height: 180,
+                colorDark: "#4A4238",
+                colorLight: "#FFFFFF",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function resetQrUrlToCurrent() {
+            const urlInput = document.getElementById('qrUrlInput');
+            urlInput.value = DEFAULT_URL;
+            updateQRCode(DEFAULT_URL);
+        }
+
+        // Download generated QR Code image
+        function downloadQRCode() {
+            const canvas = document.querySelector('#qrcodeCanvas canvas');
+            const img = document.querySelector('#qrcodeCanvas img');
+            let dataUrl = '';
+
+            if (canvas) {
+                dataUrl = canvas.toDataURL("image/png");
+            } else if (img) {
+                dataUrl = img.src;
+            }
+
+            if (dataUrl) {
+                const link = document.createElement('a');
+                link.download = 'QRCode-Matrimonio-Roberto-Silvia.png';
+                link.href = dataUrl;
+                link.click();
+            }
+        }
+
+        // Modals management
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function openImageModal(imgSrc, caption) {
+            document.getElementById('modalFullImage').src = imgSrc;
+            document.getElementById('modalImageCaption').textContent = caption ? `Condivisa da ${caption}` : '';
+            openModal('imageModal');
+        }
+
+        function scrollToUpload() {
+            document.getElementById('uploadSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        // Toast notifications
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 bg-wedding-text text-white px-5 py-2.5 rounded-full text-xs font-medium shadow-xl z-50 transition-all duration-300 opacity-0 transform translate-y-2';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-2');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
